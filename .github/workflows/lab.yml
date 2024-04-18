@@ -6,18 +6,21 @@ jobs:
         steps:
             - name: Checkout
               uses: actions/checkout@v4
+              
+            - name: List directory contents
+              run: ls -la ${{ github.workspace }}
             
             - name: formater_lib
-              run: cmake --build ${{ github.workspace }}/../formater_lib/build
+              run: cmake --build ${{ github.workspace }}/formater_lib/build
 
             - name: formater_ex_lib
-              run: cmake --build ${{ github.workspace }}/../formater_ex_lib/build
+              run: cmake --build ${{ github.workspace }}/formater_ex_lib/build
 
             - name: hello_world
-              run: cmake --build ${{ github.workspace }}/../hello_world_application/build
+              run: cmake --build ${{ github.workspace }}/hello_world_application/build
 
             - name: solver_lib
-              run: cmake --build ${{ github.workspace }}/../solver_lib/build
+              run: cmake --build ${{ github.workspace }}/solver_lib/build
 
             - name: solver_application
-              run: cmake --build ${{ github.workspace }}/../solver_application/build
+              run: cmake --build ${{ github.workspace }}/solver_application/build
