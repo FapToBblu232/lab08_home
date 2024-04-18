@@ -1,0 +1,23 @@
+name: Lab
+on: push
+jobs:
+    build-project:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+            
+            - name: formater_lib
+              run: cmake --build ${{ github.workspace }}/formater_lib/build
+
+            - name: formater_ex_lib
+              run: cmake --build ${{ github.workspace }}/formater_ex_lib/build
+
+            - name: hello_world
+              run: cmake --build ${{ github.workspace }}/hello_world_application/build
+
+            - name: solver_lib
+              run: cmake --build ${{ github.workspace }}/solver_lib/build
+
+            - name: solver_application
+              run: cmake --build ${{ github.workspace }}/solver_application/build
