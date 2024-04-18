@@ -8,16 +8,16 @@ jobs:
               uses: actions/checkout@v4
             
             - name: formater_lib
-              run: cmake --build ${{ github.workspace }}/formater_lib/build
+              run: cmake --build ${{ github.workspace }}/formater_lib/
 
             - name: formater_ex_lib
-              run: cmake --build ${{ github.workspace }}/formater_ex_lib/build
+              run: cmake --build ${{ github.workspace }}/formater_ex_lib/
 
             - name: hello_world
-              run: cmake --build ${{ github.workspace }}/hello_world_application/build
+              run: cmake --build ${{ github.workspace }}/hello_world_application/
 
             - name: solver_lib
-              run: cmake --build ${{ github.workspace }}/solver_lib/build
+              run: cmake --build ${{ github.workspace }}/solver_lib/
 
             - name: solver_application
-              run: cmake --build ${{ github.workspace }}/solver_application/build
+              run: cmake --build ${{ github.workspace }}/solver_application/
