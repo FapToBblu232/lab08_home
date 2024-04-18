@@ -1,26 +1,10 @@
-name: Lab
-on: push
+name: tp-lab-actions
+run-name: ${{ github.actor }} is running TPLab04
+on: [push]
 jobs:
-    build-project:
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v4
-            
-            - name: formater_lib
-              run: |
-                cd ${{ github.workspace }}/formatter_lib/build
-                cmake ..
-                cmake --build .
-
-            - name: formater_ex_lib
-              run: cmake --build ${{ github.workspace }}/formatter_ex_lib/
-
-            - name: hello_world
-              run: cmake --build ${{ github.workspace }}/hello_world_application/
-
-            - name: solver_lib
-              run: cmake --build ${{ github.workspace }}/solver_lib/
-
-            - name: solver_application
-              run: cmake --build ${{ github.workspace }}/solver_application/
+  container-job:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test project
+        run: ./.github/workflows/test.sh
