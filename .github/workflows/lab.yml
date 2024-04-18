@@ -10,7 +10,7 @@ jobs:
             - name: formater_lib
               run: |
                 cd ${{ github.workspace }}/formatter_lib/
-                rm -rm build
+                rm -rf build
                 mkdir build && cd build
                 cmake ..
                 cmake --build .
