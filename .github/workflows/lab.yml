@@ -1,10 +1,11 @@
 name: Actions
-
 on:
- push:
-  branches: [main]
- pull_request:
-  branches: [main]
+  push:
+    branches: [main]
+    tags:
+       - "v*.*.*"
+  pull_request:
+    branches: [main]
 
 jobs: 
  build_Linux:
@@ -23,6 +24,15 @@ jobs:
   - name: my_exe
     run: |
       echo -e "1\n2\n1" | ${{github.workspace}}/_build/main
+ 
+  - name: package
+    run: cmake --build ${{github.workspace}}/_build --target package
   
-    
-  
+  - name: package_source
+    run: cmake --build ${{github.workspace}}/_build --target package_source
+
+  - name: Arts
+    uses: actions/upload-artifact@v4
+    with:
+        name: main
+        path: ${{github.workspace}}/_build/main
