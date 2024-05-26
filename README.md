@@ -1,86 +1,120 @@
 ## Homework  
-Для работы с github **Actions** я создал папку ```.github/workflows/```  
-Там создал **yml файл**.
+Основная работа заключается в добавлении нужных тегов-параметров в Cmake  
+Вот основной **CMakeLists.txt**
+```bash
+cmake_minimum_required(VERSION 3.22)
+
+project(main)
+
+set(PRINT_VERSION_PATCH 0)
+set(PRINT_VERSION_MINOR 1)
+set(PRINT_VERSION_MAJOR 0)
+set(PRINT_VERSION_TWEAK 0)
+set(PRINT_VERSION ${PRINT_VERSION_MAJOR}.${PRINT_VERSION_MINOR}.${PRINT_VERSION_PATCH}.${PRINT_VERSION_TWEAK})
+set(PRINT_VERSION_STRING "v${PRINT_VERSION}")
+
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/formatter_ex_lib formatter_ex_new_name)
+
+target_include_directories(formatter_ex PUBLIC formatter_ex_lib formatter_lib hello_world_application solver_lib)
+
+add_library(solver ${CMAKE_CURRENT_SOURCE_DIR}/solver_lib/solver.cpp)
+
+add_executable(main ${CMAKE_CURRENT_SOURCE_DIR}/solver_application/equation.cpp)
+
+target_link_libraries(main formatter formatter_ex solver)
+
+install(TARGETS main
+RUNTIME DESTINATION bin
+)
+
+include(CPackConfig.cmake)
 ```
-name: Lab
-on: push
-jobs:
-    build-project:
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v4
-            
-            - name: formater_lib
-              run: |
-                cd ${{ github.workspace }}/formatter_lib/
-                rm -rf build
-                mkdir build && cd build
-                cmake ..
-                cmake --build .
-            - name: formater_ex_lib
-              run: |
-                cd ${{ github.workspace }}/formatter_ex_lib/
-                rm -rf build
-                mkdir build && cd build
-                cmake ..
-                cmake --build .
-            - name: hello_world
-              run: |
-                cd ${{ github.workspace }}/hello_world_application/
-                rm -rf build
-                mkdir build && cd build
-                cmake ..
-                cmake --build .
-            - name: solver_lib
-              run: |
-                cd ${{ github.workspace }}/solver_lib/
-                rm -rf build
-                mkdir build && cd build
-                cmake ..
-                cmake --build .
-            - name: solver_application
-              run: |
-                cd ${{ github.workspace }}/solver_application/
-                rm -rf build
-                mkdir build && cd build
-                cmake ..
-                cmake --build .
+Это **CPackConfig.cmake**  
+```bash
+include(InstallRequiredSystemLibraries)
+
+set(CPACK_PACKAGE_VERSION_MAJOR ${PRINT_VERSION_MAJOR})
+set(CPACK_PACKAGE_VERSION_MINOR ${PRINT_VERSION_MINOR})
+set(CPACK_PACKAGE_VERSION_PATCH ${PRINT_VERSION_PATCH})
+set(CPACK_PACKAGE_VERSION_TWEAK ${PRINT_VERSION_TWEAK})
+set(CPACK_PACKAGE_VERSION ${PRINT_VERSION})
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Lab06_home")
+
+set(CPACK_SOURCE_INSTALLED_DIRECTORIES "${CMAKE_SOURCE_DIR}; /")
+
+set(CPACK_SOURCE_GENERATOR "TGZ;ZIP")
+
+set(CPACK_DEBIAN_PACKAGE_NAME "lab06")
+set(CPACK_DEBIAN_FILE_NAME "lab06_home-${PRINT_VERSION}.deb")
+set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "all")
+set(CPACK_DEBIAN_PACKAGE_MAINTAINER "FarToBblu232")
+set(CPACK_DEBIAN_PACKAGE_DESCRIPTION "MB it works correctly")
+set(CPACK_DEBIAN_PACKAGE_RELEASE 1)
+
+set(CPACK_GENERATOR "DEB")
+
+include(CPack)
 ```
-Что у меня написано в каждом run'е:  
-Когда я пытался забилдить каждую библиотеку, у меня вылетала ошибка, что кэш в репозитории не сопоставим с кэшем при выполнении поманды  
-```
+Чтобы создать .deb файл я использовал следующее
+```bash
+mkdir _build && cd _build
+cmake ..
 cmake --build .
+cpack
 ```
-Поэтому пришлось дистанционно удалять папку *build*, после чего создавать её обратно.  
-Пример вывода для solver_application  
+После чего в папке *_build* появился архив, который я перенёс в Arts и разпаковал  
+Чтобы артефакты пофялялись ещё и дистанционно, я обновил yml файл  
+```bash
+name: Actions
+on:
+  push:
+    branches: [main]
+    tags:
+       - "v*.*.*"
+  pull_request:
+    branches: [main]
+
+jobs: 
+ build_Linux:
+
+  runs-on: ubuntu-latest
+
+  steps:
+  - uses: actions/checkout@v4
+
+  - name: Configurate
+    run: |
+      mkdir ${{github.workspace}}/_build && cd ${{github.workspace}}/_build
+      cmake ..
+      cmake --build .
+
+  - name: my_exe
+    run: |
+      echo -e "1\n2\n1" | ${{github.workspace}}/_build/main
+ 
+  - name: package
+    run: cmake --build ${{github.workspace}}/_build --target package
+  
+  - name: package_source
+    run: cmake --build ${{github.workspace}}/_build --target package_source
+
+  - name: Arts
+    uses: actions/upload-artifact@v4
+    with:
+        name: main
+        path: ${{github.workspace}}/_build/main
+
+  - name: Make a release
+    uses: ncipollo/release-action@v1
+    with:
+        artifacts: "${{github.workspace}}/_build/*.deb,${{github.workspace}}/_build/*.tar.gz,${{github.workspace}}/_build/*.zip"
+        tag: 1.0.0
+        token: ${{ secrets.GITHUB_TOKEN }}
+        allowUpdates: true
 ```
-Run cd /home/runner/work/lab04_home/lab04_home/solver_application/
--- The C compiler identification is GNU 11.4.0
--- The CXX compiler identification is GNU 11.4.0
--- Detecting C compiler ABI info
--- Detecting C compiler ABI info - done
--- Check for working C compiler: /usr/bin/cc - skipped
--- Detecting C compile features
--- Detecting C compile features - done
--- Detecting CXX compiler ABI info
--- Detecting CXX compiler ABI info - done
--- Check for working CXX compiler: /usr/bin/c++ - skipped
--- Detecting CXX compile features
--- Detecting CXX compile features - done
--- Configuring done (0.2s)
--- Generating done (0.0s)
--- Build files have been written to: /home/runner/work/lab04_home/lab04_home/solver_application/build
-[ 12%] Building CXX object solver_lib/CMakeFiles/solver_lib.dir/solver.cpp.o
-[ 25%] Linking CXX static library libsolver_lib.a
-[ 25%] Built target solver_lib
-[ 37%] Building CXX object formatter_ex_lib/formatter_lib/CMakeFiles/formatter_lib.dir/formatter.cpp.o
-[ 50%] Linking CXX static library libformatter_lib.a
-[ 50%] Built target formatter_lib
-[ 62%] Building CXX object formatter_ex_lib/CMakeFiles/formatter_ex_lib.dir/formatter_ex.cpp.o
-[ 75%] Linking CXX static library libformatter_ex_lib.a
-[ 75%] Built target formatter_ex_lib
-[ 87%] Building CXX object CMakeFiles/equation.dir/equation.cpp.o
-[100%] Linking CXX executable equation
-[100%] Built target equation
+Этот файл:
+1. Создаёт артефакт из моего executable файла
+2. Обновляет релиз 1.0.0
+```
+убрал папку _build из релиза
 ```
