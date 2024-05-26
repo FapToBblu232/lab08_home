@@ -2,8 +2,6 @@ name: Actions
 on:
   push:
     branches: [main]
-    tags:
-       - "v*.*.*"
   pull_request:
     branches: [main]
 
@@ -15,32 +13,9 @@ jobs:
   steps:
   - uses: actions/checkout@v4
 
-  - name: Configurate
-    run: |
-      mkdir ${{github.workspace}}/_build && cd ${{github.workspace}}/_build
-      cmake ..
-      cmake --build .
+  - name: Build the Docker
+    run: docker build -t logger .
 
-  - name: my_exe
-    run: |
-      echo -e "1\n2\n1" | ${{github.workspace}}/_build/equation
- 
-  - name: package
-    run: cmake --build ${{github.workspace}}/_build --target package
-  
-  - name: package_source
-    run: cmake --build ${{github.workspace}}/_build --target package_source
-
-  - name: Arts
-    uses: actions/upload-artifact@v4
-    with:
-        name: equation
-        path: ${{github.workspace}}/_build/equation
-
-  - name: Make a release
-    uses: ncipollo/release-action@v1
-    with:
-        artifacts: "${{github.workspace}}/_build/*.deb,${{github.workspace}}/_build/*.tar.gz,${{github.workspace}}/_build/*.zip"
-        tag: 1.0.0
-        token: ${{ secrets.GITHUB_TOKEN }}
-        allowUpdates: true
+  - name: Put logs
+    run: docker run -v "$(pwd)/logs/:/home/logs/" logger
+    
