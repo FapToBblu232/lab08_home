@@ -22,7 +22,7 @@ jobs:
 
   - name: my_exe
     run: |
-      ${{github.workspace}}/_build/main && echo ${1\n2\n1}
+      ${{github.workspace}}/_build/main && echo "1\n2\n1"
   
     
   
