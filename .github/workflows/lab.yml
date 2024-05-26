@@ -1,48 +1,28 @@
-name: Lab
-on: push
-jobs:
-    build-project:
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v4
-            
-            - name: formater_lib
-              run: |
-                cd ${{ github.workspace }}/formatter_lib/
-                rm -rf build
-                mkdir build && cd build
-                cmake ..
-                cmake --build .
+name: Actions
 
-            - name: formater_ex_lib
-              run: |
-                cd ${{ github.workspace }}/formatter_ex_lib/
-                rm -rf build
-                mkdir build && cd build
-                cmake ..
-                cmake --build .
+on:
+ push:
+  branches: [master]
+ pull_request:
+  branches: [master]
 
-            - name: hello_world
-              run: |
-                cd ${{ github.workspace }}/hello_world_application/
-                rm -rf build
-                mkdir build && cd build
-                cmake ..
-                cmake --build .
+jobs: 
+ build_Linux:
 
-            - name: solver_lib
-              run: |
-                cd ${{ github.workspace }}/solver_lib/
-                rm -rf build
-                mkdir build && cd build
-                cmake ..
-                cmake --build .
+  runs-on: ubuntu-latest
 
-            - name: solver_application
-              run: |
-                cd ${{ github.workspace }}/solver_application/
-                rm -rf build
-                mkdir build && cd build
-                cmake ..
-                cmake --build .
+  steps:
+  - uses: actions/checkout@v4
+
+  - name: Configurate
+    run: |
+      mkdir ${{github.workspace}}/_build && cd ${{github.workspace}}/_build
+      cmake .. -DBUILD_TESTS=ON
+      cmake --build .
+
+  - name: my_exe
+    run: ${{github.workspace}}/_build/my_exe
+
+  - name: Run tests
+    run: _build/my_test
+    

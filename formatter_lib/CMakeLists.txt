@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.22)
-project(formatter_lib)
+project(formatter)
 
 set(SOURCE_LIB formatter.cpp formatter.h)
 
-add_library(formatter_lib STATIC ${SOURCE_LIB})
+add_library(formatter STATIC ${SOURCE_LIB})
+
+target_include_directories(formatter PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}) 

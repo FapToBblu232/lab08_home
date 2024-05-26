@@ -7,8 +7,10 @@ include_directories("../solver_lib/")
 
 add_executable(equation equation.cpp)
 
-add_subdirectory("../formatter_ex_lib/" formatter_ex_lib)
-add_subdirectory("../solver_lib/" solver_lib)
+add_subdirectory("../formatter_ex_lib/" formatter_ex)
+add_subdirectory("../solver_lib/" solver)
 
-target_link_libraries(equation formatter_ex_lib)
-target_link_libraries(equation solver_lib)
+target_link_libraries(equation formatter_ex)
+target_link_libraries(equation solver)
+
+target_include_directories(equation PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}) 
