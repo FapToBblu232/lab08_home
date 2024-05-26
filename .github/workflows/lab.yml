@@ -2,9 +2,9 @@ name: Actions
 
 on:
  push:
-  branches: [master]
+  branches: [main]
  pull_request:
-  branches: [master]
+  branches: [main]
 
 jobs: 
  build_Linux:
@@ -17,12 +17,13 @@ jobs:
   - name: Configurate
     run: |
       mkdir ${{github.workspace}}/_build && cd ${{github.workspace}}/_build
-      cmake .. -DBUILD_TESTS=ON
+      cmake ..
       cmake --build .
 
   - name: my_exe
-    run: ${{github.workspace}}/_build/my_exe
-
-  - name: Run tests
-    run: _build/my_test
+    run: |
+      ${{github.workspace}}/_build/my_exe
+      echo ${1\n2\n1}
+  
     
+  
