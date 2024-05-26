@@ -23,7 +23,7 @@ jobs:
 
   - name: my_exe
     run: |
-      echo -e "1\n2\n1" | ${{github.workspace}}/_build/main
+      echo -e "1\n2\n1" | ${{github.workspace}}/_build/equation
  
   - name: package
     run: cmake --build ${{github.workspace}}/_build --target package
@@ -34,8 +34,8 @@ jobs:
   - name: Arts
     uses: actions/upload-artifact@v4
     with:
-        name: main
-        path: ${{github.workspace}}/_build/main
+        name: equation
+        path: ${{github.workspace}}/_build/equation
 
   - name: Make a release
     uses: ncipollo/release-action@v1

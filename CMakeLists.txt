@@ -1,6 +1,6 @@
-cmake_minimum_required(VERSION 3.22)
+cmake_minimum_required(VERSION 3.8)
 
-project(main)
+project(equation)
 
 set(PRINT_VERSION_PATCH 0)
 set(PRINT_VERSION_MINOR 1)
@@ -15,11 +15,11 @@ target_include_directories(formatter_ex PUBLIC formatter_ex_lib formatter_lib he
 
 add_library(solver ${CMAKE_CURRENT_SOURCE_DIR}/solver_lib/solver.cpp)
 
-add_executable(main ${CMAKE_CURRENT_SOURCE_DIR}/solver_application/equation.cpp)
+add_executable(equation ${CMAKE_CURRENT_SOURCE_DIR}/solver_application/equation.cpp)
 
-target_link_libraries(main formatter formatter_ex solver)
+target_link_libraries(equation formatter formatter_ex solver)
 
-install(TARGETS main
+install(TARGETS equation
 RUNTIME DESTINATION bin
 )
 

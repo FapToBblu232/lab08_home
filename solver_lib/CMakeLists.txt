@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.22)
+cmake_minimum_required(VERSION 3.8)
 project(solver)
 
 set(SOURCE_LIB solver.cpp solver.h)
