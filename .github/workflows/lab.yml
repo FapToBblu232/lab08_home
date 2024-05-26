@@ -36,3 +36,11 @@ jobs:
     with:
         name: main
         path: ${{github.workspace}}/_build/main
+
+  - name: Make a release
+    uses: ncipollo/release-action@v1
+    with:
+        artifacts: "${{github.workspace}}/_build/*.deb,${{github.workspace}}/_build/*.tar.gz,${{github.workspace}}/_build/*.zip"
+        tag: 1.0.0
+        token: ${{ secrets.GITHUB_TOKEN }}
+        allowUpdates: true
